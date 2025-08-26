@@ -3,7 +3,13 @@ export const metadata = {
   description: "VibeMarket activity tracker • packs • pulls • tokens • verified"
 };
 
+// app/layout.jsx
 import "./globals.css";
+
+export const metadata = {
+  title: "VibeMarket Tracker",
+  description: "VibeMarket dashboard",
+};
 
 export default function RootLayout({ children }) {
   return (
@@ -12,3 +18,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+

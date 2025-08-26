@@ -138,17 +138,24 @@ export default function Page() {
       </header>
 
       {/* Ticker */}
-      <div className="wrapper">
-        <div className="ticker-wrap panel">
-          <div className="ticker-rtl">
-            {(ticker.length ? ticker : []).concat(ticker).map((i, idx) => (
-              <div key={`${i.id}-${idx}`} className="chip">
-                {`${short(i.owner)} pulled ${i.cardName ? i.cardName + " • " : ""}${i.rarity}${i.priceUsd ? " ("+i.priceUsd+")" : ""} in ${i.collection} #${i.tokenId}`}
-              </div>
-            ))}
-          </div>
+<div className="wrapper">
+  <div className="ticker-wrap panel">
+    <div className="ticker-rtl">
+      {(ticker.length ? ticker : [{id:"x",txt:"Waiting for pulls…"}]).map(i => (
+        <div key={i.id} className="chip">
+          {`${short(i.owner)} pulled ${i.rarity || ""} in ${i.collection} #${i.tokenId}`}
         </div>
-      </div>
+      ))}
+      {/* duplicate for seamless loop */}
+      {ticker.map(i => (
+        <div key={i.id + "-dup"} className="chip">
+          {`${short(i.owner)} pulled ${i.rarity || ""} in ${i.collection} #${i.tokenId}`}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
       {/* Body */}
       <div className="wrapper">
@@ -182,33 +189,34 @@ export default function Page() {
             {/* For Trade (local list + optional import) */}
             {active === "For Trade" && <ForTrade wallet={wallet} />}
 
-            {/* Activity */}
-            {active === "Activity" && (
-              <section className="panel">
-                <div className="panel-head">
-                  <div className="panel-title">Recent Pulls</div>
-                </div>
-                <div className="cards" style={{gridTemplateColumns:"1fr"}}>
-                  {(ticker.length ? ticker : []).slice(0, 60).map(i => (
-                    <div key={i.id} className="card row" style={{padding:10}}>
-                      {i.image ? (
-                        <img className="thumb" alt="" src={i.image} style={{width:40,height:40,borderRadius:8}} />
-                      ) : (
-                        <div className="thumb" style={{width:40,height:40,borderRadius:8}} />
-                      )}
-                      <div className="grow">
-                        <div className="title">{short(i.owner)} pulled</div>
-                        <div className="sub">
-                          <span className="linklike">{i.collection}</span> • #{i.tokenId}
-                          {" "}{rarityIcons(i.rarity)}{i.priceUsd ? ` (${i.priceUsd})` : ""}{i.cardName ? ` • ${i.cardName}` : ""}
-                        </div>
-                      </div>
-                      <div className="muted">{new Date(i.ts).toLocaleTimeString()}</div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+            {/* Activity – Recent pulls list */}
+{active === "Activity" && (
+  <section className="panel">
+    <div className="panel-head">
+      <div className="panel-title">Recent Pulls</div>
+      <button className="btn" onClick={refreshActivity(setTicker)}>Refresh</button>
+    </div>
+    <div className="cards" style={{gridTemplateColumns:"1fr"}}>
+      {(ticker.length ? ticker : [{id:"y"}]).slice(0,50).map(i => (
+        <div key={i.id} className="card row" style={{padding:12, alignItems:"center"}}>
+          {i.image ? (
+            <img className="thumb" alt="" src={i.image} style={{width:56,height:56,borderRadius:12,objectFit:"cover"}} />
+          ) : (
+            <div className="thumb" style={{width:56,height:56,borderRadius:12}} />
+          )}
+          <div className="grow">
+            <div className="title">{short(i.owner)} pulled</div>
+            <div className="sub">
+              <span className="linklike">{i.collection}</span> • #{i.tokenId}
+              {" "}{rarityIcons(i.rarity)}{i.priceUsd ? ` (${i.priceUsd})` : ""}
+            </div>
+          </div>
+          <div className="muted">{new Date(i.ts).toLocaleTimeString()}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
 
             {/* Profile */}
             {active === "Profile" && (
